@@ -1,0 +1,55 @@
+import { createContext, useState } from "react"
+import axios from "axios"
+
+export const AuthContext = createContext()
+
+export const AuthProvider = ({children})=>{
+    const [ user, setUser ] = useState(null)
+    const [token, setToken] = useState(null)
+
+    const SignUp = async (formData) => {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_AUTH_BASE_URL}/signup`,formData,{
+                headers : {
+                    "Content-Type" : "application/json"
+                }
+            })
+           
+            setUser(response.data.user)
+            setToken(response.data.token)
+            console.log("Signup successful :" , response.data);
+            localStorage.setItem("token", response.data.token)
+
+            return response.data
+        } catch (error) {
+            console.error("signup failed :", error.response?.data || error.message);
+            throw error.response?.data || error;
+        }
+    }
+
+     const SignIn = async (formData) => {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_AUTH_BASE_URL}/signin`,formData,{
+                headers : {
+                    "Content-Type" : "application/json"
+                }
+            })
+           
+            setUser(response.data.user)
+            setToken(response.data.token)
+            console.log("Login successful :" , response.data);
+            localStorage.setItem("token", response.data.token)
+
+            return response.data
+        } catch (error) {
+            console.error("Login failed :", error.response?.data || error.message);
+            throw error.response?.data || error;
+        }
+    }
+
+    return (
+        <AuthContext.Provider value={{SignUp,SignIn,user,token}}>
+            {children}
+        </AuthContext.Provider>
+    )
+}

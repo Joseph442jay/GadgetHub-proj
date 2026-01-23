@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import AuthLayout from "../../Layouts/AuthLayout"
 import Input from "../../Components/Input"
 import Button from "../../Components/Button"
-import { GoEyeClosed } from "react-icons/go";
+import { GoEyeClosed, GoEye } from "react-icons/go";
 import { useState } from "react"
 import { useNavigate } from "react-router"
+import { AuthContext } from "../../Context/AuthContext"
+import { toast } from "react-toastify"
 
 const initialFormData= {
   firstName: "",
@@ -17,10 +19,18 @@ const initialFormData= {
 }
 
 export default function SignUp() {
+  const navigate = useNavigate()
   const [ formData , setFormData ] = useState(initialFormData);
   const [errors, setErrors ]= useState({})
+  const [ submitError , setSubmitError ] = useState("")
   const [ isLoading, setIsLoading ]= useState(false)
-  const navigate = useNavigate()
+  const [ showPassword, setShowPassword ] = useState(false)
+  const [ showConfirmPassword, setShowConfirmPassword ] = useState(false)
+  const { SignUp } = useContext(AuthContext)
+
+  const toggleShowPassword = ()=> { setShowPassword(!showPassword) }
+  const toggleShowConfirmPassword = ()=> { setShowConfirmPassword(!showConfirmPassword) }
+
 
    const handleChange = (e)=>{
    const { name, type, value, checked } = e.target;
@@ -51,14 +61,23 @@ export default function SignUp() {
     return Object.keys(newErrors).length === 0
     }
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = async (e)=>{
       e.preventDefault();
       if (!formValidation()) return;
       console.log(formData);
       setIsLoading(true)
       setErrors({})
-      setFormData(initialFormData)
-      navigate("/login")
+      try {
+        await SignUp(formData)
+        setFormData(initialFormData)
+        toast.success("Sign up successful")
+        navigate("/login")
+      } catch (error) {
+        setSubmitError(error.message || "Sign up failed")
+        toast.error("Sign up failed, try again")
+      } finally{
+        setIsLoading(false)
+      }
     }
 
  
@@ -70,6 +89,7 @@ export default function SignUp() {
     auth="Login now"
     to="/login">
 
+      {submitError && <p className="text-red-600 font-semibold mb-3">{submitError}</p>}
       <form className="flex flex-col w-full">
 
         <div className="flex flex-col lg:flex-row justify-between w-full gap-4 lg:gap-20">
@@ -103,8 +123,8 @@ export default function SignUp() {
           <div className="flex flex-col w-full">
             <label htmlFor="password">Password</label>
              <div className="relative">
-                <Input onChange={handleChange} value={formData.password} name="password"  type="password" className="mt-2 w-full" placeholder="*********"   />
-                <button className="absolute top-1/2 right-3"><GoEyeClosed /></button>
+                <Input onChange={handleChange} value={formData.password} name="password"  type={ showPassword ? "text" : "password"} className="mt-2 w-full" placeholder="*********"   />
+                <button type="button" className="absolute top-1/2 right-3" onClick={toggleShowPassword}>{ showPassword ? <GoEye /> : <GoEyeClosed />  }</button>
               </div>
            {errors.password && <span className="text-red-700 font-semibold">{errors.password}</span>}
           </div>
@@ -112,8 +132,8 @@ export default function SignUp() {
            <div className="flex flex-col w-full">
             <label htmlFor="confirmPassword">Confirm Password</label>
            <div className="relative">
-                <Input onChange={handleChange} value={formData.confirmPassword} name="confirmPassword" type="password" className="mt-2 w-full" placeholder="*********"   />
-                <button className="absolute top-1/2 right-3"><GoEyeClosed /></button>
+                <Input onChange={handleChange} value={formData.confirmPassword} name="confirmPassword" type={ showConfirmPassword ? "text" : "password"} className="mt-2 w-full" placeholder="*********"   />
+                <button type="button" className="absolute top-1/2 right-3" onClick={toggleShowConfirmPassword}>{ showConfirmPassword ? <GoEye /> : <GoEyeClosed /> }</button>
             </div>
          {errors.confirmPassword && <span className="text-red-700 font-semibold">{errors.confirmPassword}</span>}
           </div>
@@ -126,7 +146,7 @@ export default function SignUp() {
          {errors.checkbox && <span className="text-red-700 font-semibold">{errors.checkbox}</span>}
          
 
-          <Button onClick={handleSubmit} content={isLoading ? "Loading" : "Sign up"} type="submit" className="bg-[#FA8232] hover:bg-[#db6b21] text-white h-[54px] mt-5 font-semibold" />
+          <Button disabled={isLoading} onClick={handleSubmit} content={isLoading ? "Loading" : "Sign up"} className="bg-[#FA8232] hover:bg-[#db6b21] text-white h-[54px] mt-5 font-semibold" />
       </form>
 
     </AuthLayout>

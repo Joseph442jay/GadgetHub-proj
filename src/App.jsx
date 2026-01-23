@@ -9,7 +9,7 @@ import HomePage from "./Pages/HomePage"
 import ScrollToTop from "./Components/ScrollToTop"
 import ProductPage from "./Pages/ProductPage"
 import ProductDetailsPage from "./Pages/ProductDetailsPage"
-
+import CartPage from "./Pages/CartPage"
 
 import CheckoutPage from "./Pages/CheckoutPage"
 
@@ -28,6 +28,7 @@ function App() {
         <Route path="/products" element={<ProductPage />} />
         <Route path="/product/:id" element={<ProductDetailsPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/cartpage" element={<CartPage />} />
       </Routes>
        <ScrollToTop />
     </Router>

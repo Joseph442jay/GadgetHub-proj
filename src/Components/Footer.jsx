@@ -2,6 +2,7 @@ import React from 'react'
 import Input from "../Components/Input"
 import Button from "../Components/Button"
 import { Link } from "react-router"
+
 export default function Footer() {
     const quickLinks = [
         { id:1,

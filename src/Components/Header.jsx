@@ -9,7 +9,11 @@ import { Link } from "react-router"
 import ShoppingCartModal from "./HomePage Components/Shopping Cart/ShoppingCartModal"
 import { CartContext } from "../Context/ShoppingCartContext"
 import { LikeContext } from "../Context/LikeContext"
+import { useNavigate } from "react-router"
+
 export default function Header() {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false)
   const { cart } = useContext(CartContext)
   const { likes } =  useContext(LikeContext)
@@ -72,6 +76,14 @@ export default function Header() {
         }
 
     ]
+
+  const handleSearch = (e) => {
+  e.preventDefault();
+  if (!searchQuery.trim()) return;
+  navigate(`/products?search=${searchQuery}`);
+ };
+
+
   return (
     <div className="flex flex-col w-full">
        {showModal && <ShoppingCartModal showModal={showModal} setShowModal={setShowModal} />}
@@ -83,13 +95,13 @@ export default function Header() {
            </div>
         </div>
 
-        <div  className="container mx-auto flex items-center justify-between gap-0 lg:gap-25 h-[14vh] py-10 lg:py-2 px-5">
+        <div className="container mx-auto flex items-center justify-between gap-0 lg:gap-25 h-[14vh] py-10 lg:py-2 px-5">
             <Link to="/"><img src={Logo} alt="" /></Link>
 
-            <div className="hidden md:flex relative lg:w-[556px]">
-                <Input type="text" className="w-full h-[12] rounded-md border-[#ACACAC]" placeholder="Search for a gadget..." />
+            <form onSubmit={handleSearch} className="hidden md:flex relative lg:w-[556px]">
+                <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} type="text" className="w-full h-[12] rounded-md border-[#ACACAC]" placeholder="Search for a gadget..." />
                 <span className="absolute right-3 top-3"><CiSearch size={30} /></span>
-            </div>
+            </form>
 
              <div className="flex gap-5">
             <div className="flex gap-5">

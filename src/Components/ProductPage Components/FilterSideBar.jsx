@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 
-export default function FilterSideBar() {
+export default function FilterSideBar({ activeFilters, setActiveFilters }) {
   const [openFilter, setOpenFilter] = useState(null);
 
   const toggleFilter = (filterName) => {
@@ -23,13 +23,58 @@ export default function FilterSideBar() {
     },
     {
       name: "Ratings",
-      options: ["4.5 & Up", "4 & Up", "3.5 & Up"],
+      options: ["4.5", "4", "3.5"],
     },
     {
       name: "Availability",
       options: ["In Stock"],
     },
   ];
+
+  const handleChange = (filterName, option, type) => {
+  setActiveFilters((prev) => {
+    if (filterName === "category") {
+      return { ...prev, category: option };
+    }
+
+    if (filterName === "price") {
+      let priceRange = null;
+
+      if (option === "Under ₦200,000") {
+        priceRange = { min: 0, max: 200000 };
+      } else if (option === "₦200,000 - ₦1,000,000") {
+        priceRange = { min: 200000, max: 1000000 };
+      } else if (option === "₦1,000,000 +") {
+        priceRange = { min: 1000000, max: null };
+      }
+
+      return { ...prev, price: priceRange };
+    }
+
+    if (filterName === "rating") {
+      const value = parseFloat(option);
+      return { ...prev, rating: value };
+    }
+
+    if (filterName === "availability") {
+      return { ...prev, availability: "inStock" };
+    }
+
+    if (filterName === "brands") {
+      const exists = prev.brands.includes(option);
+      return {
+        ...prev,
+        brands: exists
+          ? prev.brands.filter((b) => b !== option)
+          : [...prev.brands, option],
+      };
+    }
+
+    return prev;
+  });
+};
+
+
 
   return (
     <div
@@ -54,7 +99,8 @@ export default function FilterSideBar() {
                     {filter.options.map((option, idx) => (
                         <label key={idx} 
                         className="flex items-center gap-2 cursor-pointer text-[#5F6C72] hover:text-black">
-                        <input type={["Category", "Price Range", "Availability"].includes(filter.name) ? "radio" : "checkbox"} name={filter.name} className="w-[16px] accent-[#FA8232] h-[16px] rounded-full"/>
+                        <input type={["Category", "Price Range", "Availability"].includes(filter.name) ? "radio" : "checkbox"} name={filter.name} className="w-[16px] accent-[#FA8232] h-[16px] rounded-full" onChange={() => {
+                          const map = {Category: "category","Price Range": "price",Brand: "brands",Ratings: "rating",Availability: "availability",}; handleChange(map[filter.name], option);}}/>
                         <span className="text-[14px]">{option}</span>
                         </label>
                     ))}

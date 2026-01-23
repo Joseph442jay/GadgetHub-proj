@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import AuthLayout from "../../Layouts/AuthLayout"
 import Input from "../../Components/Input"
-import { GoEyeClosed } from "react-icons/go";
+import { GoEyeClosed, GoEye  } from "react-icons/go";
 import Button from "../../Components/Button"
 import { useState } from "react"
-import { useNavigate } from "react-router"
+import { useNavigate, Link } from "react-router"
+import { AuthContext } from "../../Context/AuthContext"
+import { toast } from "react-toastify"
 
 const initialFormData = {
   email : "",
@@ -12,10 +14,14 @@ const initialFormData = {
 }
 
 export default function Login() {
-  const [ formData, setFormData ] = useState(initialFormData)
-  const [ isLoading, setIsLoaoding ] = useState(false)
-  const [errors, setErrors ] = useState({})
   const navigate = useNavigate()
+  const [ formData, setFormData ] = useState(initialFormData)
+  const [ isLoading, setIsLoading ] = useState(false)
+  const [ errors, setErrors ] = useState({})
+  const [ submitError, setSubmitError ] = useState("")
+  const [ showPassword, setShowPassword ] = useState(false)
+  const toggleShowPassword = ()=> { setShowPassword(!showPassword) }
+  const { SignIn } = useContext(AuthContext)
 
   const handleChange = (e)=>{
     setFormData({...formData, [e.target.name] : e.target.value})
@@ -41,15 +47,23 @@ export default function Login() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e)=>{
+  const handleSubmit = async (e)=>{
     e.preventDefault()
     if (!formValidation()) return;
     console.log(formData);
-    setIsLoaoding(true)
+    setIsLoading(true)
     setErrors({})
-    setFormData(initialFormData)
-    navigate("/")
-    //connect to backend
+    try {
+      await SignIn(formData)
+      setFormData(initialFormData)
+      toast.success("Login successful")
+      navigate("/")
+    } catch (error) {
+      setSubmitError(error.message || "Login failed")
+      toast.danger("Login failed, try again!")
+    }finally{
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -58,17 +72,18 @@ export default function Login() {
     paragraph="Don’t have an account yet?" 
     auth="Sign up now"
     to="/signup">
+      {submitError && <p className="text-red-600 font-semibold">{submitError}</p>}
         <form className="flex flex-col w-full">
             <label htmlFor="email">Email</label>
             <Input onChange={handleChange} type="email" className="my-2" placeholder="Enter your email" name="email" value={formData.email}  />
             {errors.email && <p className="text-red-900 font-semibold">{errors.email}</p>}
             <label htmlFor="password">Password</label>
             <div className="relative">
-                <Input  onChange={handleChange} type="password" className="mt-2 w-full" placeholder="Enter your password"   name="password" value={formData.password} />
-                <button className="absolute top-5 right-3"><GoEyeClosed /></button>
-                 { errors.password && <p className="text-red-900 font-semibold">{errors.password }</p>}
+                <Input  onChange={handleChange} type={ showPassword ? "text" : "password"} className="mt-2 w-full" placeholder="Enter your password"   name="password" value={formData.password} />
+                <button type="button" onClick={toggleShowPassword} className="absolute top-1/2 right-3">{ showPassword ? <GoEye /> : <GoEyeClosed />  }</button>
             </div>
-            <p>Forgot your password?</p>
+                 { errors.password && <p className="text-red-900 font-semibold">{errors.password }</p>}
+           <Link to=""><p>Forgot your password?</p></Link>
 
             <Button onClick={handleSubmit} content={ isLoading ? "Loading" : "Login"} type="submit" className="bg-[#FA8232] hover:bg-[#db6b21] text-white h-[54px] mt-5 font-semibold" />
         </form>

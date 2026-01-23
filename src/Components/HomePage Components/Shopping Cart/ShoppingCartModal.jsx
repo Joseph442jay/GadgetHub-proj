@@ -3,16 +3,27 @@ import ShoppingCartItem from "./ShoppingCartItem"
 import Button from "../../Button"
 import { CartContext } from "../../../Context/ShoppingCartContext"
 import { FiShoppingCart } from "react-icons/fi";
+import { useNavigate } from "react-router"
+
 export default function ShoppingCartModal({showModal, setShowModal}) {
+  const navigate = useNavigate()
   
-  const { cart, clearCart } = useContext(CartContext)
+  const { cart, clearCart, totalPrice } = useContext(CartContext)
   if (!showModal) return null;
   const closeModal = ()=>{
         setShowModal(false)
     }
-  const totalPrice = cart.reduce((total, cartItem)=>{
-        return total + cartItem.price * cartItem.quantity;
-    }, 0);
+ 
+
+    const handleViewCart =(e)=>{
+      e.preventDefault();
+      navigate("/cartpage")
+    }
+
+    const handleCheckout = (e)=>{
+      e.preventDefault();
+      navigate("/checkout")
+    }
 
 
   return (
@@ -38,8 +49,8 @@ export default function ShoppingCartModal({showModal, setShowModal}) {
             <p className="text-[#475156] text-[14px]">Sub-Total:</p>
             <h1 className="text-[16px] font-semibold">₦{totalPrice}</h1>
           </div>
-          <Button className="w-full bg-[#FA8232] hover:bg-[#db6b21] my-2 rounded-md text-white h-[48px]" content="Checkout Now" />
-          <Button className="w-full text-[#FA8232] border border-[#FA8232] hover:bg-[#FA8232] hover:text-white rounded-md h-[48px]" content="View Cart" />
+          <Button onClick={handleCheckout} className="w-full bg-[#FA8232] hover:bg-[#db6b21] my-2 rounded-md text-white h-[48px]" content="Checkout Now" />
+          <Button onClick={handleViewCart} className="w-full text-[#FA8232] border border-[#FA8232] hover:bg-[#FA8232] hover:text-white rounded-md h-[48px]" content="View Cart" />
         </div>
 
     </div>

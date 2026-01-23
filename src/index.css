@@ -8,3 +8,19 @@
     border-left: 1px solid #FFEFD2;
     border-right: 1px solid #FFEFD2;
 }
+
+.cartFrame{
+    background-image: url("./assets/cartFrame.png");
+    height: 189px;
+    background-color: #FFF1EA;
+    opacity: 90%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 500;
+    margin-top: 20px;
+}

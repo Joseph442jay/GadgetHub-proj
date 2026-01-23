@@ -17,7 +17,9 @@ export default function ProductsProperties({product}) {
       isInStock,
       writeUp,
       displayPrice,
+      color,
       colorOptions = [],
+      storage,
       storageOptions = [],
     } = product;
   const [selectedImage, setSelectedImage] = useState(image)
@@ -25,19 +27,24 @@ export default function ProductsProperties({product}) {
   const [selectedStorage, setSelectedStorage] = useState("")
   const [quantity, setQuantity] = useState(1)
 
-    useEffect(() => {
-      setSelectedImage(product.image);
-      if (colorOptions.length && product.color) {
-      const matchedColor = colorOptions.find(
-      (clr) => clr.name === product.color
-    );
-    setSelectedColor(matchedColor || colorOptions[0]);
+  useEffect(() => {
+  setSelectedImage(product.image);
+
+  if (colorOptions.length > 0) {
+    const defaultColor =
+      colorOptions.find(c => c.name === color) || colorOptions[0];
+    setSelectedColor(defaultColor);
+  } else {
+    setSelectedColor(null);
   }
 
-  if (storageOptions.length && product.storage) {
-    setSelectedStorage(product.storage);
+  if (storageOptions.length > 0) {
+    setSelectedStorage(storage || storageOptions[0]);
+  } else {
+    setSelectedStorage("");
   }
-}, [product, colorOptions, storageOptions]);
+}, [product]);
+
 
 
 
@@ -108,49 +115,42 @@ export default function ProductsProperties({product}) {
 
           <p className="text-[28px] font-semibold">{displayPrice}</p>
 
-          {selectedColor && (
-            <div>
-              <p className="text-sm mb-2">
-                Color: <span className="font-medium">{selectedColor.name}</span>
-              </p>
+          {colorOptions.length > 0 && selectedColor && (<div><p className="text-sm mb-2">Color: <span className="font-medium">{selectedColor.name}</span></p>
+          <div className="flex gap-3">
+      {colorOptions.map((clr, index) => (
+        <button
+          key={index}
+          onClick={() => setSelectedColor(clr)}
+          className={`h-8 w-8 rounded-full border transition ${
+            selectedColor.name === clr.name
+              ? "border-[#FA8232]"
+              : "border-[#E8E6E6]"
+          }`}
+          style={{ backgroundColor: clr.colorCode }}
+          title={clr.name}
+        />
+      ))}</div>
+      </div>)}
 
-              <div className="flex gap-3">
-                {colorOptions.map((clr, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedColor(clr)}
-                    className={`h-8 w-8 rounded-full border transition
-                      ${
-                        selectedColor.name === clr.name
-                          ? "border-[#FA8232]"
-                          : "border-[#E8E6E6]"
-                      }
-                    `}
-                    style={{ backgroundColor: clr.colorCode }}
-                    title={clr.name}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-          <div>
-            <p className="text-sm mb-2">Storage</p>
-            <div className="flex gap-3 flex-wrap">
-              {storageOptions.map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setSelectedStorage(size)}
-                  className={`px-4 py-2 h-[35px] w-[70px] border rounded-md text-sm ${
-                    selectedStorage === size
-                      ? "border-[#FA8232] text-[#FA8232]"
-                      : "border-gray-500 text-gray-300"
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-          </div>
+          {storageOptions.length > 0 && (
+  <div>
+    <p className="text-sm mb-2">Storage</p>
+
+    <div className="flex gap-3 flex-wrap">
+      {storageOptions.map(size => (
+        <button
+          key={size}
+          onClick={() => setSelectedStorage(size)}
+          className={`px-4 py-2 h-[35px] w-[70px] border rounded-md text-sm ${
+            selectedStorage === size
+              ? "border-[#FA8232] text-[#FA8232]"
+              : "border-gray-500 text-gray-300"
+          }`}
+        >
+          {size}
+        </button>))}
+        </div>
+        </div>)}
 
           <div>
             <p className="text-sm mb-2">Quantity</p>

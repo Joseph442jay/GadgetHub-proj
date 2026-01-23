@@ -5,10 +5,12 @@ import App from './App.jsx'
 import ShoppingCartProvider from "./Context/ShoppingCartContext"
 import LikeProvider from "./Context/LikeContext"
 import { ToastContainer } from "react-toastify"
+import { AuthProvider } from "./Context/AuthContext"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ShoppingCartProvider>
+    <AuthProvider>
+        <ShoppingCartProvider>
       <LikeProvider>
          <App />
          <ToastContainer  position="top-center"
@@ -20,5 +22,6 @@ createRoot(document.getElementById('root')).render(
         draggable />
       </LikeProvider>
     </ShoppingCartProvider>
+    </AuthProvider>
   </StrictMode>,
 )

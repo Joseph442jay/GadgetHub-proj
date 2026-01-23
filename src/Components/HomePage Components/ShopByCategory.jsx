@@ -1,8 +1,14 @@
 import React from 'react'
 import { products } from "../../productData.js"
 import { IoIosArrowRoundForward } from "react-icons/io";
+import { useNavigate } from "react-router"
 
 export default function ShopByCategory() {
+  const navigate = useNavigate()
+  const toCategories = (e)=>{
+    e.preventDefault();
+    navigate("/products")
+  }
   const categoryMap = new Map();
 
   products.forEach((product) => {
@@ -13,10 +19,11 @@ export default function ShopByCategory() {
 
   let uniqueCategoryProducts = Array.from(categoryMap.values());
 
-  const categoryOrder = ["Wearables", "Laptops", "Phones", "Accessories", "Gaming","Smart Homes"];
+  const categoryOrder = ["Wearables", "Laptops", "SmartPhones", "Accessories", "Gaming","Smart Homes"];
   uniqueCategoryProducts.sort(
     (a, b) => categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category)
   );
+  
 
   return (
     <div className="container mx-auto px-5 py-5 lg:py-20">
@@ -37,7 +44,7 @@ export default function ShopByCategory() {
             <p className="text-sm text-gray-500">Discover 50+ Products</p>
           </div>
         ))}
-        <button className="absolute -right-4 top-15 bg-[#FA8232] h-12 w-12 rounded-full text-[35px] text-white flex items-center justify-center">
+        <button onClick={toCategories} className="absolute -right-4 top-15 bg-[#FA8232] h-12 w-12 rounded-full text-[35px] text-white flex items-center justify-center">
           <IoIosArrowRoundForward />
         </button>
       </div>
