@@ -100,7 +100,7 @@ export default function ShoppingCartProvider({ children }) {
         decreaseQuantity,
         clearCart,
         getCartCount,
-        totalPrice
+        totalPrice,
       }}
     >
       {children}

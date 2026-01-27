@@ -1,7 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import moneyBag from "../../assets/moneyBag.png"
+import creditCard from "../../assets/ATMCard.png"
+import payPal from "../../assets/payPal.png"
 
-export default function PaymentMethod() {
+export default function PaymentMethod({ onChange }) {
     const [selectedOption, setSelectedOption] = useState("");
+
+    useEffect(()=>{
+      onChange(selectedOption)
+    },[selectedOption])
+
   return (
     <form className="p-4 border border-[#E8E6E6]">
         <h1>Select Payment Method</h1>
@@ -21,7 +29,7 @@ export default function PaymentMethod() {
         />
         <label>Pay On Delivery</label>
         </div>
-        <img src="" alt="" />
+        <img src={moneyBag} alt="" />
       </div>
 
       <div
@@ -39,7 +47,7 @@ export default function PaymentMethod() {
         />
         <label>Pay With Credit Card</label>
         </div>
-        <img src="" alt="" />
+        <img src={creditCard} alt="" />
       </div>
 
        <div
@@ -57,7 +65,7 @@ export default function PaymentMethod() {
         />
         <label>Pay With Pay Pal</label>
         </div>
-        <img src="" alt="" />
+        <img src={payPal} alt="" />
       </div>
     </form>
   )

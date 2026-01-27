@@ -4,7 +4,7 @@ import ProductCard from "../Components/ProductCard"
 import { FaGreaterThan } from "react-icons/fa";
 import { products } from "../productData.js"
 import FilterSideBar from "../Components/ProductPage Components/FilterSideBar"
-import vector from "../assets/Vector.png"
+import vector from "../assets/doublearrowright.png"
 import ServiceAd from "../Components/HomePage Components/ServiceAd"
 import { useSearchParams } from "react-router";
 

@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export default function DeliveryDetails() {
+export default function DeliveryDetails({ onChange }) {
   const [selectedOption, setSelectedOption] = useState("");
+
+  useEffect(()=>{
+    onChange(selectedOption)
+  }, [selectedOption])
 
   return (
     <form className="p-4 border border-[#E8E6E6]">

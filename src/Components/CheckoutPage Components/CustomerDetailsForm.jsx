@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { AuthContext } from "../../Context/AuthContext"
 
-export default function CustomerDetailsForm() {
+export default function CustomerDetailsForm({ onChange }) {
   const [nigeriaData, setNigeriaData] = useState([]);
   const [states, setStates] = useState([]);
   const [lgas, setLgas] = useState([]);
@@ -58,6 +58,14 @@ export default function CustomerDetailsForm() {
       setLgas([])
     }
   }, [selectedState, nigeriaData]);
+
+  useEffect(()=>{
+    onChange({
+      ...formData,
+      state : selectedState,
+      city : selectedCity
+    })
+  }, [formData, selectedState, selectedCity])
 
 
   return (

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import { Link } from "react-router"
 import Logo from "../assets/GadgetHub Logo.png"
 import paymentVector from "../assets/onlinePaymentVector.png"
@@ -6,8 +6,29 @@ import { FaGreaterThan } from "react-icons/fa";
 import CustomerDetailsForm from "../Components/CheckoutPage Components/CustomerDetailsForm"
 import DeliveryDetails from "../Components/CheckoutPage Components/DeliveryDetails"
 import PaymentMethod from "../Components/CheckoutPage Components/PaymentMethod"
+import OrderSummary from "../Components/CheckoutPage Components/OrderSummary"
+import { CartContext } from "../Context/ShoppingCartContext"
+import { toast } from "react-toastify"
+import Footer from "../Components/Footer"
 
 export default function CheckoutPage() {
+  const { cart } = useContext(CartContext)
+  const [orderData, setOrderData] = useState({
+    customer : {},
+    deliveryMethod : "",
+    paymentMethod: "",
+  })
+
+  const handleConfirmOrder = async () => {
+    const payload = {
+      ...orderData,
+      items : cart
+    }
+    console.log("Final order :", payload);
+    toast.success("Order Confirmed")
+    
+  }
+
   return (
     <div className="flex flex-col w-full">
          <div className="hidden lg:flex bg-[#191C1F] text-white">
@@ -38,12 +59,20 @@ export default function CheckoutPage() {
                  </h1>
         </div>
 
-        <div>
-          <CustomerDetailsForm />
-          <DeliveryDetails />
-          <PaymentMethod />
-        </div>
+      <div  className="py-2 px-5 flex justify-between gap-5 container mx-auto">
+          <div className="flex flex-col gap-4 w-2/3">
+          <CustomerDetailsForm onChange={(data) => setOrderData(prev => ({...prev, customer : data}))} />
+          <DeliveryDetails onChange={(value) => setOrderData(prev => ({...prev, deliveryMethod : value}))} />
+          <PaymentMethod onChange={(value) => setOrderData(prev => ({...prev, paymentMethod : value}))} />
+          </div>
+       
+         <div className="w-1/3">
+         <OrderSummary onConfirm={handleConfirmOrder} />
+         </div>
+      </div>
 
+   
+   <Footer />
         
     </div>
   )
