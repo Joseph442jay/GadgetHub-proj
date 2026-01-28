@@ -39,12 +39,12 @@ export default function CheckoutPage() {
            </div>
         </div>
 
-        <div className="container mx-auto flex items-center justify-between gap-0 lg:gap-25 h-[14vh] py-10 lg:py-2 px-5">
+        <div className="flex justify-between px-3 py-3">
             <Link to="/"><img src={Logo} alt="" /></Link>
 
             <div className="flex items-center gap-2">
-                <img className="w-6 h-6" src={paymentVector} alt="" />
-                <p>secure & safe payment</p>
+                <img className="w-4 h-4 lg:w-6 lg:h-6" src={paymentVector} alt="" />
+                <p className="text-[14px] lg:text-[18px]">secure & safe payment</p>
             </div>
             
         </div>
@@ -59,14 +59,14 @@ export default function CheckoutPage() {
                  </h1>
         </div>
 
-      <div  className="py-2 px-5 flex justify-between gap-5 container mx-auto">
-          <div className="flex flex-col gap-4 w-2/3">
+      <div  className="py-2 px-5 flex flex-col lg:flex justify-between gap-5 container mx-auto">
+          <div className="flex flex-col gap-4 w-full lg:w-2/3">
           <CustomerDetailsForm onChange={(data) => setOrderData(prev => ({...prev, customer : data}))} />
           <DeliveryDetails onChange={(value) => setOrderData(prev => ({...prev, deliveryMethod : value}))} />
           <PaymentMethod onChange={(value) => setOrderData(prev => ({...prev, paymentMethod : value}))} />
           </div>
        
-         <div className="w-1/3">
+         <div className="w-full lg:w-1/3">
          <OrderSummary onConfirm={handleConfirmOrder} />
          </div>
       </div>
