@@ -1,13 +1,24 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { GrShareOption } from "react-icons/gr"
 import { CiHeart } from "react-icons/ci"
 import { HiMiniMinus, HiMiniPlus } from "react-icons/hi2"
 import Button from "../../Components/Button"
 import Tabs from "../ProductDetailsPageComponents/ProductTabs"
+import { FaHeart } from "react-icons/fa"; 
+import {LikeContext} from "../../Context/LikeContext"
+import { toast } from "react-toastify"
+import { CartContext } from "../../Context/ShoppingCartContext"
+import { useNavigate } from "react-router"
 
 export default function ProductsProperties({product}) {
+   const { addToLikes, removeFromLikes, isLiked } = useContext(LikeContext)
+   const { addToCart } = useContext(CartContext)
+   const navigate = useNavigate()
   if (!product) return null;
     const {
+      id,
+      price,
+      description,
       image,
       imageGallery = [],
       name,
@@ -46,6 +57,64 @@ export default function ProductsProperties({product}) {
 }, [product]);
 
 
+  const toggleLike = () => {
+    if (isLiked(id)) {
+      removeFromLikes(id);
+    } else {
+      addToLikes({ id, image, name, price, description });
+    }
+  };
+
+  const handleShare = () => {
+  const shareData = {
+    title: name,
+    text: `Check out this product: ${name} by ${brand}.`,
+    url: window.location.href,
+  };
+
+  if (navigator.share) {
+    navigator.share(shareData)
+      .then(() => console.log("Product shared successfully"))
+      .catch((error) => console.error("Error sharing", error));
+  } else {
+    navigator.clipboard.writeText(shareData.url)
+      .then(() => toast.success("Link copied to clipboard!"))
+      .catch((error) => console.error("Clipboard error", error));
+  }
+  };
+
+   const handleBuyNow = () => {
+    const cartItem = {
+      id,
+      name,
+      price: Number(price),
+      image,
+      description,
+      quantity,
+      color: selectedColor?.name || null,
+      storage: selectedStorage || null,
+    };
+
+    addToCart(cartItem);                      
+    navigate("/cartpage");                       
+  };
+
+  const handleAddToCart = () => {
+    const cartItem = {
+      id,
+      name,
+      price: Number(price),
+      image,
+      description,
+      quantity,
+      color: selectedColor?.name || null,
+      storage: selectedStorage || null,
+    };
+
+    addToCart(cartItem);
+  };
+
+
 
 
   return (
@@ -60,12 +129,16 @@ export default function ProductsProperties({product}) {
               className="w-full lg:w-[520px] h-auto rounded-md border border-[#E8E6E6] object-contain"
             />
 
-            <button className="absolute top-3 right-14 bg-white rounded-full h-8 w-8 flex items-center justify-center shadow">
+            <button onClick={handleShare} className="absolute top-3 right-14 bg-white rounded-full h-8 w-8 flex items-center justify-center shadow">
               <GrShareOption size={18} />
             </button>
 
-            <button className="absolute top-3 right-3 bg-white rounded-full h-8 w-8 flex items-center justify-center shadow">
-              <CiHeart size={22} />
+            <button onClick={toggleLike} className="absolute top-3 right-3 bg-white rounded-full h-8 w-8 flex items-center justify-center shadow">
+               { isLiked(id) ? (
+                       <FaHeart size={23} className="text-red-500" />
+                     ) : (
+                       <CiHeart size={25} />
+                     )}
             </button>
           </div>
 
@@ -156,14 +229,20 @@ export default function ProductsProperties({product}) {
             <p className="text-sm mb-2">Quantity</p>
             <div className="flex items-center border border-[#E8E6E6] w-[145px] h-[39px] rounded-md">
               <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                onClick={() => {if (quantity > 1) {
+                setQuantity(quantity - 1);
+                toast.info(`Quantity decreased to ${quantity - 1}`);
+                } else {
+                toast.warn("Minimum quantity is 1");}}}
                 className="w-10 border-r border-[#E8E6E6] h-[39px] flex items-center justify-center"
               >
                 <HiMiniMinus />
               </button>
               <span className="flex-1 text-center">{quantity}</span>
               <button
-                onClick={() => setQuantity(quantity + 1)}
+                onClick={() => {setQuantity(quantity + 1)
+                toast.success(`Quantity increased to ${quantity + 1}`);
+                }}
                 className="w-10 h-[39px] border-l border-[#E8E6E6] flex items-center justify-center"
               >
                 <HiMiniPlus />
@@ -175,12 +254,14 @@ export default function ProductsProperties({product}) {
 
           <div className="space-y-3 pt-4">
             <Button
+              onClick={handleBuyNow}
               content="Buy Now"
               className="w-full text-white rounded-md h-12"
             />
             <Button
+              onClick={handleAddToCart}
               content="Add to Cart"
-              className="w-full border border-[#6C4CF1] text-[#6C4CF1] rounded-md h-12"
+              className="w-full border border-[#6C4CF1] bg-white text-[#6C4CF1] hover:text-white rounded-md h-12"
             />
           </div>
 

@@ -5,10 +5,26 @@ import payPal from "../../assets/payPal.png"
 
 export default function PaymentMethod({ onChange }) {
     const [selectedOption, setSelectedOption] = useState("");
+    const [cardData, setCardData] = useState({
+    cardNumber: "",
+    cardHolder: "",
+    expiryDate: "",
+    cvv: ""
+    })
 
-    useEffect(()=>{
-      onChange(selectedOption)
-    },[selectedOption])
+
+     useEffect(() => {
+    if (selectedOption === "creditcard") {
+      onChange({ method: selectedOption, cardData })
+    } else {
+      onChange({ method: selectedOption })
+    }
+    }, [selectedOption, cardData])
+
+    const handleCardChange = (e) => {
+    const { name, value } = e.target
+    setCardData(prev => ({ ...prev, [name]: value }))
+    }
 
   return (
     <form className="p-4 border border-[#E8E6E6]">
@@ -34,14 +50,14 @@ export default function PaymentMethod({ onChange }) {
 
       <div
         className={`flex items-center p-3 justify-between my-2 rounded-md h-[54px] w-full 
-        border-[1.5px] ${selectedOption === "crediCard" ? "border-[#6C4CF1]" : "border-[#E8E6E6]"}`}
+        border-[1.5px] ${selectedOption === "creditcard" ? "border-[#6C4CF1]" : "border-[#E8E6E6]"}`}
       >
         <div className="flex gap-3">
             <input
           type="radio"
           name="payment"
-          value="creditCard"
-          checked={selectedOption === "creditCard"}
+          value="creditcard"
+          checked={selectedOption === "creditcard"}
           onChange={(e) => setSelectedOption(e.target.value)}
           className="w-5 h-5 accent-[#6C4CF1]"
         />
@@ -49,17 +65,63 @@ export default function PaymentMethod({ onChange }) {
         </div>
         <img src={creditCard} alt="" />
       </div>
+       {selectedOption === "creditcard" && (
+          <div className="mt-3 flex flex-col gap-3">
+            <label htmlFor="cardNumber">Card Number *</label>
+            <input
+              type="text"
+              name="cardNumber"
+              value={cardData.cardNumber}
+              onChange={handleCardChange}
+              placeholder="1234 5678 3456 6677"
+              className="w-full px-3 py-2 border border-[#E8E6E6] rounded-md"
+            />
+            <label htmlFor="cardholder name">Cardholder Name *</label>
+            <input
+              type="text"
+              name="cardHolder"
+              value={cardData.cardHolder}
+              onChange={handleCardChange}
+              placeholder="John Doe"
+              className="w-full px-3 py-2 border border-[#E8E6E6] rounded-md"
+            />
+            <div className="flex gap-3 w-full">
+             <div className="flex flex-col w-1/2">
+              <label htmlFor="expiryDate">Expiry Date *</label>
+               <input
+                type="text"
+                name="expiryDate"
+                value={cardData.expiryDate}
+                onChange={handleCardChange}
+                placeholder="MM/YY"
+                className="flex-1 px-3 py-2 border border-[#E8E6E6] rounded-md"
+              />
+             </div>
+             <div className="flex flex-col w-1/2">
+              <label htmlFor="cvv">CVV *</label>
+               <input
+                type="text"
+                name="cvv"
+                value={cardData.cvv}
+                onChange={handleCardChange}
+                placeholder="123"
+                className="w-full px-3 py-2 border border-[#E8E6E6] rounded-md"
+              />
+             </div>
+            </div>
+          </div>
+        )}
 
        <div
         className={`flex items-center p-3 justify-between my-2 rounded-md h-[54px] w-full 
-        border-[1.5px] ${selectedOption === "payPal" ? "border-[#6C4CF1]" : "border-[#E8E6E6]"}`}
+        border-[1.5px] ${selectedOption === "paypal" ? "border-[#6C4CF1]" : "border-[#E8E6E6]"}`}
       >
         <div className="flex gap-3">
             <input
           type="radio"
           name="payment"
-          value="payPal"
-          checked={selectedOption === "payPal"}
+          value="paypal"
+          checked={selectedOption === "paypal"}
           onChange={(e) => setSelectedOption(e.target.value)}
           className="w-5 h-5 accent-[#6C4CF1]"
         />

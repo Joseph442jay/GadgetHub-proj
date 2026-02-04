@@ -60,7 +60,7 @@ export default function Login() {
       navigate("/")
     } catch (error) {
       setSubmitError(error.message || "Login failed")
-      toast.danger("Login failed, try again!")
+      toast.error("Login failed, try again!")
     }finally{
       setIsLoading(false)
     }

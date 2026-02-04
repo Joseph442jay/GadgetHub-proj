@@ -4,13 +4,13 @@ import OrderItems from "../CheckoutPage Components/OrderItems"
 
 export default function OrderSummary({onConfirm}) {
     const {cart, totalPrice, getCartCount} = useContext(CartContext)
-     let deliveryCost = 1000
+    let deliveryCost = 1000
     let subTotal = totalPrice
   return (
     <div className="border border-[#E8E6E6] p-3 rounded-md">
           <h1 className="text-[20px] font-semibold"> Order Summary ({getCartCount()})</h1>
         {cart.map((item)=>{
-                return <OrderItems  key={item.id} {...item} />
+                return <OrderItems key={item.id} {...item} />
                })}
 
 

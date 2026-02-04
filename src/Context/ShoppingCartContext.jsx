@@ -27,23 +27,45 @@ export default function ShoppingCartProvider({ children }) {
   };
 
   const addToCart = (item) => {
-    const existing = cartRef.current.find((i) => i.id === item.id);
+  const safeQuantity = Number(item.quantity) || 1;
+  const safePrice = Number(item.price) || 0;
 
-    setCart((prevCart) => {
-      if (prevCart.find((i) => i.id === item.id)) {
-        return prevCart.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
-      }
-      return [...prevCart, { ...item, quantity: 1 }];
-    });
+  const existing = cartRef.current.find(
+    (i) =>
+      i.id === item.id &&
+      i.color === item.color &&
+      i.storage === item.storage
+  );
 
+  setCart((prevCart) => {
     if (existing) {
-      showOnce(`${item.name} quantity increased`, "success");
-    } else {
-      showOnce(`${item.name} added to cart`, "success");
+      return prevCart.map((i) =>
+        i.id === item.id &&
+        i.color === item.color &&
+        i.storage === item.storage
+          ? { ...i, quantity: i.quantity + safeQuantity }
+          : i
+      );
     }
+
+    return [
+      ...prevCart,
+      {
+        ...item,
+        price: safePrice,
+        quantity: safeQuantity,
+      },
+    ];
+  });
+
+  showOnce(
+    existing
+      ? `${item.name} quantity updated`
+      : `${item.name} added to cart`,
+    "success"
+  );
   };
+
 
   const removeFromCart = (id) => {
     const removedItem = cartRef.current.find((i) => i.id === id);
@@ -62,15 +84,26 @@ export default function ShoppingCartProvider({ children }) {
   };
 
   const decreaseQuantity = (id) => {
-    const item = cartRef.current.find((i) => i.id === id);
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id && item.quantity > 1
+  setCart((prevCart) => {
+    const updatedCart = prevCart
+      .map((item) =>
+        item.id === id
           ? { ...item, quantity: item.quantity - 1 }
           : item
       )
-    );
-    if (item) showOnce(`Decreased ${item.name} quantity`, "info");
+      .filter((item) => item.quantity > 0);
+
+    const item = prevCart.find((i) => i.id === id);
+    if (item) {
+      if (item.quantity > 1) {
+        showOnce(`Decreased ${item.name} quantity`, "info");
+      } else {
+        showOnce(`Removed ${item.name} from cart`, "info");
+      }
+    }
+
+    return updatedCart;
+  });
   };
 
   const clearCart = () => {
@@ -86,9 +119,11 @@ export default function ShoppingCartProvider({ children }) {
     return cart.reduce((count, item) => count + item.quantity, 0);
   };
 
-   const totalPrice = cart.reduce((total, cartItem)=>{
-        return total + cartItem.price * cartItem.quantity;
-    }, 0);
+  const totalPrice = cart.reduce((total, item) => {
+  const itemPrice = Number(item.price) || 0;
+  const itemQty = Number(item.quantity) || 1;
+  return total + itemPrice * itemQty;
+  }, 0);
 
   return (
     <CartContext.Provider

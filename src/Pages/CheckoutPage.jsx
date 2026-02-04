@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Link, useNavigate } from "react-router"
+import { Link } from "react-router"
 import Logo from "../assets/GadgetHub Logo.png"
 import paymentVector from "../assets/onlinePaymentVector.png"
 import { FaGreaterThan } from "react-icons/fa";
@@ -11,8 +11,10 @@ import { CartContext } from "../Context/ShoppingCartContext"
 import { toast } from "react-toastify"
 import Footer from "../Components/Footer"
 import OrderReceived from "../Components/CheckoutPage Components/OrderReceived"
+import PreviewOrder from "../Components/CheckoutPage Components/PreviewOrder"
 
 export default function CheckoutPage() {
+  const [showPreview, setShowPreview] = useState(false);
   const [ showModal, setShowModal ]= useState(false)
   const { cart } = useContext(CartContext)
   const [orderData, setOrderData] = useState({
@@ -27,12 +29,23 @@ export default function CheckoutPage() {
       items : cart
     }
     console.log("Final order :", payload);
+    setShowPreview(false);
     toast.success("Order Confirmed")
-     setShowModal(true);
+    setShowModal(true);
   }
+
+  const handlePreviewOrder = () => {
+  if (!orderData.paymentMethod || !orderData.deliveryMethod) {
+    toast.error("Please complete all checkout steps");
+    return;
+  }
+  setShowPreview(true);
+  };
+
 
   return (
     <div className="flex flex-col w-full">
+      {showPreview && ( <PreviewOrder orderData={orderData} cart={cart} onBack={() => setShowPreview(false)} onConfirm={handleConfirmOrder}/>)}
            {showModal && <OrderReceived showModal={showModal} setShowModal={setShowModal} />}
          <div className="hidden lg:flex bg-[#191C1F] text-white">
            <div className="flex container mx-auto items-center justify-between w-full h-[7vh] px-5">
@@ -43,7 +56,7 @@ export default function CheckoutPage() {
         </div>
 
         <div className="flex justify-between px-3 py-3 container mx-auto">
-            <Link to="/"><img src={Logo} alt="" /></Link>
+            <Link to="/"><img className="w-[152px] h-[39px]" src={Logo} alt="" /></Link>
 
             <div className="flex items-center gap-2">
                 <img className="w-4 h-4 lg:w-6 lg:h-6" src={paymentVector} alt="" />
@@ -64,13 +77,13 @@ export default function CheckoutPage() {
 
       <div  className="py-2 px-5 flex flex-col lg:flex lg:flex-row justify-between gap-5 container mx-auto w-full">
           <div className="flex flex-col gap-4 w-full lg:w-2/3">
-          <CustomerDetailsForm onChange={(data) => setOrderData(prev => ({...prev, customer : data}))} />
-          <DeliveryDetails onChange={(value) => setOrderData(prev => ({...prev, deliveryMethod : value}))} />
+          <CustomerDetailsForm onChange={(data) => setOrderData(prev => ({...prev, customer : data, deliveryMethod: data.hasAddress ? "doorstep" : "pickup"}))} />
+          <DeliveryDetails deliveryMethod={orderData.deliveryMethod} addressExists={Boolean(orderData.customer.address?.trim())} onChange={(value) => setOrderData(prev => ({...prev, deliveryMethod : value}))} />
           <PaymentMethod onChange={(value) => setOrderData(prev => ({...prev, paymentMethod : value}))} />
           </div>
        
          <div className="w-full lg:w-1/3">
-         <OrderSummary onConfirm={handleConfirmOrder} />
+         <OrderSummary onConfirm={handlePreviewOrder} />
          </div>
       </div>
 

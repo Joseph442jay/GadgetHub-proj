@@ -63,14 +63,15 @@ export default function CustomerDetailsForm({ onChange }) {
     onChange({
       ...formData,
       state : selectedState,
-      city : selectedCity
+      city : selectedCity,
+      hasAddress: Boolean(formData.address?.trim())
     })
   }, [formData, selectedState, selectedCity])
 
 
   return (
     <div>
-        <form className="p-4 border border-[#E8E6E6]">
+        <form className="p-4 border border-[#E8E6E6] rounded-md">
             <h1 className="text-[24px] font-semibold pb-3">Customer Details</h1>
             <label className="text-[18px]" htmlFor="full name">Full Name</label>
             <input name="fullName"

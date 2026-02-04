@@ -6,14 +6,14 @@ import Button from "../../Components/Button"
 export default function OrderReceived({showModal, setShowModal}) {
 
   const navigate = useNavigate()
+  
   if (!showModal) return null;
+
   const seeOrderDetails = ()=>{
         setShowModal(false)
-        navigate("/order")
+        navigate("/profile")
     }
 
-
-    
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 ">
       <div  className="bg-white rounded-xl shadow-lg w-[99%] max-w-md p-6 relative flex flex-col items-center gap-3 text-center mx-auto">

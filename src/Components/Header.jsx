@@ -91,7 +91,7 @@ export default function Header() {
     return (
       <div className="flex relative gap-2">
         <div className="flex gap-2 items-center">
-          {icons.map((icon)=> (icon.id === 1 && <button className="relative" onClick={showCart}  key={icon.id}>
+          {icons.map((icon)=> (icon.id === 1 && <button className="relative cursor-pointer" onClick={showCart}  key={icon.id}>
                   <span className="text-3xl">{icon.icon}</span>
                   {cart.length > 0 && (
                     <span className="bg-[#6C4CF1] text-white w-6 h-6 rounded-full flex items-center justify-center absolute -top-2 -right-2">
@@ -99,8 +99,8 @@ export default function Header() {
                       </span>
                     )}
                     </button>) )}
-         <div onClick={()=> setIsOpen(!isOpen)} className="flex items-center">
-          <img className="h-[49px] w-[49px] rounded-full" src={user?.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadJ-YmNxJTg6v9iO22fzR_65KenYJHFB5zg&s"} alt={user.firstName} />
+         <div onClick={()=> setIsOpen(!isOpen)} className="flex items-center cursor-pointer">
+          <img className="h-10 w-10 rounded-full" src={user?.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRadJ-YmNxJTg6v9iO22fzR_65KenYJHFB5zg&s"} alt={user.firstName} />
           <p className="text-[18px] font-semibold">Hello {user.firstName}</p>
          </div>
         </div>
@@ -142,7 +142,7 @@ export default function Header() {
         </div>
 
         <div className="container mx-auto flex items-center justify-between gap-0 lg:gap-25 h-[14vh] py-10 lg:py-2 px-5">
-            <Link to="/"><img src={Logo} alt="" /></Link>
+            <Link to="/"><img className="w-[152px] h-[39px]" src={Logo} alt="" /></Link>
 
             <form onSubmit={handleSearch} className="hidden md:flex relative lg:w-[556px]">
                 <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} type="text" className="w-full h-[12] rounded-md border-[#ACACAC]" placeholder="Search for a gadget..." />
